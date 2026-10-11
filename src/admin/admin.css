@@ -227,6 +227,12 @@
   font-size: 0.86rem;
 }
 
+.admin-form-notice {
+  margin: 0;
+  color: #d9ff5f;
+  font-size: 0.86rem;
+}
+
 .admin-loading {
   display: flex;
   gap: 0.8rem;

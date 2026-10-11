@@ -32,8 +32,9 @@ The project uses Supabase Auth plus Postgres Row Level Security. The Supabase se
    ```
 
    Use the UUID displayed for the invited user. To revoke access, delete that row; the user will no longer pass the database authorization function and policies.
-5. Copy `.env.example` to `.env.local` and fill in the project URL and anon/publishable key. Add the same two `VITE_` variables to the Vercel project's Production, Preview, and Development environments, then redeploy. `VITE_SUPABASE_ANON_KEY` is a public client key, not a secret. **Never add the Supabase service-role key to a `VITE_` variable or this repository.**
-6. Visit `/admin/login`, sign in with the invited account, and manage draft content. Use **Publish** to make the saved draft visible to the public portfolio. A draft save alone does not replace public content.
+5. In Authentication → URL Configuration, set the Site URL to `https://lakshman-ten.vercel.app` and allow the redirect URLs `https://lakshman-ten.vercel.app/admin/login` and `http://localhost:5173/admin/login`. Password recovery links return to the admin sign-in page and open the password reset form automatically.
+6. Copy `.env.example` to `.env.local` and fill in the project URL and anon/publishable key. Add the same two `VITE_` variables to the Vercel project's Production, Preview, and Development environments, then redeploy. `VITE_SUPABASE_ANON_KEY` is a public client key, not a secret. **Never add the Supabase service-role key to a `VITE_` variable or this repository.**
+7. Visit `/admin/login`, sign in with the invited account, and manage draft content. Use **Publish** to make the saved draft visible to the public portfolio. A draft save alone does not replace public content.
 
 The dashboard route is `/admin` and sign-in is at `/admin/login`. Vercel rewrites in [`vercel.json`](./vercel.json) make these client routes serve the existing Vite application. Supabase Auth verifies credentials; the database's `is_site_admin()` function and RLS policies independently authorize every content mutation and upload, including direct API requests. Passwords are not stored by this app. Supabase Auth persists its session token using the SDK; website content is stored in Postgres, not browser storage.
 

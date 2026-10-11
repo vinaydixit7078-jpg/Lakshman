@@ -48,6 +48,13 @@ const sections = [
 
 const makeId = () => crypto.randomUUID()
 const initialSection = () => new URLSearchParams(window.location.search).get('section') || 'overview'
+const isPasswordRecoveryRoute = () => (
+  window.location.pathname.replace(/\/+$/, '') === '/admin/reset-password'
+  || new URLSearchParams(window.location.hash.slice(1)).get('type') === 'recovery'
+  || new URLSearchParams(window.location.hash.slice(1)).has('error_code')
+  || new URLSearchParams(window.location.search).get('mode') === 'recovery'
+  || new URLSearchParams(window.location.search).has('error_code')
+)
 
 function safeImagePreview(value) {
   try {
@@ -170,12 +177,22 @@ function AdminLogin({ onSignedIn }) {
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
+  const [recovering, setRecovering] = useState(false)
 
   async function submit(event) {
     event.preventDefault()
     setBusy(true)
     setError('')
     try {
+      if (recovering) {
+        const { error: recoveryError } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/admin/login`,
+        })
+        if (recoveryError) throw recoveryError
+        setNotice('If an account exists for that email, a password recovery link has been sent.')
+        return
+      }
       const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
       if (signInError) throw new Error('Login failed. Check the email and password, then try again.')
       const { data: authorized, error: accessError } = await supabase.rpc('is_site_admin')
@@ -198,15 +215,98 @@ function AdminLogin({ onSignedIn }) {
       <form className="admin-login-card" onSubmit={submit}>
         <span className="admin-logo">EK</span>
         <p className="admin-eyebrow">PRIVATE SITE MANAGEMENT</p>
-        <h1>Admin sign in</h1>
-        <p>Sign in with the authorized account created for this portfolio.</p>
+        <h1>{recovering ? 'Reset your password' : 'Admin sign in'}</h1>
+        <p>{recovering ? 'Enter your admin email to receive a secure password reset link.' : 'Sign in with the authorized account created for this portfolio.'}</p>
         <Field label="Email" type="email" value={email} onChange={setEmail} />
-        <Field label="Password" type="password" value={password} onChange={setPassword} />
+        {!recovering && <Field label="Password" type="password" value={password} onChange={setPassword} />}
         {error && <p className="admin-form-error" role="alert">{error}</p>}
+        {notice && <p className="admin-form-notice" role="status">{notice}</p>}
         <button className="admin-primary-button full-button" type="submit" disabled={busy}>
-          {busy ? 'Signing in…' : 'Sign in securely'}
+          {busy ? 'Please wait…' : recovering ? 'Send recovery link' : 'Sign in securely'}
         </button>
+        <button type="button" className="text-action" onClick={() => {
+          setRecovering((value) => !value)
+          setError('')
+          setNotice('')
+        }}>{recovering ? 'Back to sign in' : 'Forgot password? Send a recovery link'}</button>
         <small>There is no public registration or password setup form.</small>
+      </form>
+    </main>
+  )
+}
+
+function PasswordRecovery() {
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [ready, setReady] = useState(false)
+  const [hasRecoverySession, setHasRecoverySession] = useState(false)
+  const [complete, setComplete] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    supabase.auth.getSession().then(({ data, error: sessionError }) => {
+      if (!active) return
+      if (sessionError) setError(`Could not verify the recovery link: ${sessionError.message}`)
+      else if (!data.session) setError('This recovery link is invalid or expired. Request a new link and open it within 60 minutes.')
+      else setHasRecoverySession(true)
+      setReady(true)
+    })
+    return () => { active = false }
+  }, [])
+
+  async function submit(event) {
+    event.preventDefault()
+    setError('')
+    if (password.length < 8) {
+      setError('Choose a password with at least 8 characters.')
+      return
+    }
+    if (password !== confirmPassword) {
+      setError('The passwords do not match.')
+      return
+    }
+
+    setBusy(true)
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({ password })
+      if (updateError) throw updateError
+      const { error: signOutError } = await supabase.auth.signOut()
+      if (signOutError) throw signOutError
+      setComplete(true)
+    } catch (cause) {
+      setError(cause.message || 'Could not update the password. Request a new recovery link and try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <main className="admin-login-page">
+      <a className="admin-back-link" href="/"><ArrowLeft size={16} /> Back to portfolio</a>
+      <form className="admin-login-card" onSubmit={submit}>
+        <span className="admin-logo">EK</span>
+        <p className="admin-eyebrow">SECURE ACCOUNT RECOVERY</p>
+        <h1>{complete ? 'Password updated' : 'Set a new password'}</h1>
+        <p>{complete ? 'Your password has been changed. Sign in with your new password to manage the site.' : 'Choose a new password for your authorized admin account.'}</p>
+        {!ready ? <span className="admin-help">Verifying your secure recovery link…</span> : complete ? (
+          <a className="admin-primary-button full-button" href="/admin/login">Continue to sign in</a>
+        ) : !hasRecoverySession ? (
+          <>
+            {error && <p className="admin-form-error" role="alert">{error}</p>}
+            <a className="admin-primary-button full-button" href="/admin/login?mode=recovery">Request another recovery link</a>
+          </>
+        ) : (
+          <>
+            <Field label="New password" type="password" value={password} onChange={setPassword} />
+            <Field label="Confirm new password" type="password" value={confirmPassword} onChange={setConfirmPassword} />
+            {error && <p className="admin-form-error" role="alert">{error}</p>}
+            <button className="admin-primary-button full-button" type="submit" disabled={busy}>
+              {busy ? 'Updating password…' : 'Update password'}
+            </button>
+          </>
+        )}
       </form>
     </main>
   )
@@ -214,7 +314,7 @@ function AdminLogin({ onSignedIn }) {
 
 function AdminApp() {
   const [session, setSession] = useState(null)
-  const [authLoading, setAuthLoading] = useState(() => Boolean(isSupabaseConfigured && window.location.pathname !== '/admin/login'))
+  const [authLoading, setAuthLoading] = useState(() => Boolean(isSupabaseConfigured && window.location.pathname !== '/admin/login' && !isPasswordRecoveryRoute()))
   const [content, setContent] = useState(cloneDefaultContent)
   const [savedContent, setSavedContent] = useState(null)
   const [publishedContent, setPublishedContent] = useState(null)
@@ -282,7 +382,7 @@ function AdminApp() {
     if (!isSupabaseConfigured) {
       return undefined
     }
-    if (window.location.pathname === '/admin/login') {
+    if (window.location.pathname === '/admin/login' || isPasswordRecoveryRoute()) {
       return undefined
     }
     let active = true
@@ -538,6 +638,8 @@ function AdminApp() {
       </main>
     )
   }
+
+  if (isPasswordRecoveryRoute()) return <PasswordRecovery />
 
   if (authLoading) return <main className="admin-loading"><span className="admin-spinner" />Checking your secure session…</main>
 
