@@ -1,21 +1,11 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, ArrowUpRight, Menu, Play, PlayCircle, X } from 'lucide-react'
 import { athleteData } from './data/athleteData'
 import './App.css'
 
-const navItems = [
-  { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Journey', href: '#journey' },
-  { label: 'Achievements', href: '#achievements' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Videos', href: '#videos' },
-  { label: 'Contact', href: '#contact' },
-]
-
 const reveal = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
 }
 
@@ -23,19 +13,30 @@ const currentYear = new Date().getFullYear()
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const reduceMotion = useReducedMotion()
+  const motionTransition = {
+    duration: reduceMotion ? 0 : 0.65,
+    ease: 'easeOut',
+  }
 
   return (
     <div className="page-shell">
       <header className="topbar">
-        <nav className="nav container" aria-label="Main navigation">
+        <nav
+          className="nav container"
+          aria-label="Main navigation"
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setMenuOpen(false)
+          }}
+        >
           <a href="#home" className="brand" aria-label="EK LAKSHYA home">
-            <span className="brand-mark">EK</span>
-            <span>LAKSHYA</span>
+            <span className="brand-mark" aria-hidden="true">EK</span>
+            <span>{athleteData.brand}</span>
           </a>
 
-          <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
-            {navItems.map((item) => (
-              <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>
+          <div id="nav-menu" className={`nav-links ${menuOpen ? 'open' : ''}`}>
+            {athleteData.navigation.map((item) => (
+              <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>
                 {item.label}
               </a>
             ))}
@@ -48,7 +49,7 @@ function App() {
             className="follow-button"
           >
             FOLLOW THE JOURNEY
-            <ArrowUpRight size={18} />
+            <ArrowUpRight size={18} aria-hidden="true" />
           </a>
 
           <button
@@ -56,6 +57,7 @@ function App() {
             className="menu-toggle"
             onClick={() => setMenuOpen((open) => !open)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-controls="nav-menu"
             aria-expanded={menuOpen}
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -71,19 +73,21 @@ function App() {
           <div className="container hero-grid">
             <motion.div
               variants={reveal}
-              initial="hidden"
+              initial={reduceMotion ? false : 'hidden'}
               animate="visible"
-              transition={{ duration: 0.6, ease: 'easeOut' }}
+              transition={motionTransition}
               className="hero-copy"
             >
-              <p className="eyebrow">{athleteData.hero.label}</p>
-              <h1>{athleteData.hero.headline}</h1>
+              <p className="eyebrow">{athleteData.brand} / ATHLETE PORTFOLIO</p>
+              <h1>{athleteData.fullName}</h1>
+              <p className="hero-role">{athleteData.role}</p>
+              <p className="hero-headline">{athleteData.hero.headline}</p>
               <p className="supporting-copy">{athleteData.hero.subheadline}</p>
 
               <div className="cta-row">
                 <a href="#journey" className="primary-button">
                   EXPLORE MY JOURNEY
-                  <ArrowRight size={18} />
+                  <ArrowRight size={18} aria-hidden="true" />
                 </a>
                 <a
                   href={athleteData.channelUrl}
@@ -92,43 +96,42 @@ function App() {
                   className="secondary-button"
                 >
                   WATCH ON YOUTUBE
-                  <Play size={16} />
+                  <Play size={16} aria-hidden="true" />
                 </a>
               </div>
 
-              <div className="pill-row" aria-label="Core values">
+              <div className="pill-row" aria-label="Athlete values">
+                <span>DISCIPLINE</span>
                 <span>CONSISTENCY</span>
-                <span>STRENGTH</span>
-                <span>FOCUS</span>
+                <span>GROWTH</span>
               </div>
             </motion.div>
 
-            <motion.div
+            <motion.figure
               variants={reveal}
-              initial="hidden"
+              initial={reduceMotion ? false : 'hidden'}
               animate="visible"
-              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
-              className="hero-spotlight"
+              transition={{ ...motionTransition, delay: reduceMotion ? 0 : 0.12 }}
+              className="hero-portrait"
             >
-              <div className="spotlight-card">
-                <div className="card-kicker">{athleteData.brand}</div>
-                <p>{athleteData.hero.accent}</p>
-                <div className="card-meta">
-                  <span>
-                    <PlayCircle size={16} />
-                    Available on YouTube
-                  </span>
-                </div>
-              </div>
-            </motion.div>
+              <img
+                src={athleteData.portrait}
+                alt="Laxman Chauhan outdoors in athletic clothing"
+                fetchPriority="high"
+              />
+              <figcaption>
+                <span>{athleteData.brand}</span>
+                <strong>{athleteData.hero.accent}</strong>
+              </figcaption>
+            </motion.figure>
           </div>
         </section>
 
         <section id="about" className="section">
           <div className="container">
             <div className="section-heading">
-              <p className="section-kicker">About</p>
-              <h2>Built on discipline, motion, and steady growth.</h2>
+              <p className="section-kicker">01 / About</p>
+              <h2>A runner’s mindset. A journey still in motion.</h2>
             </div>
 
             <div className="about-grid">
@@ -137,71 +140,70 @@ function App() {
                 <blockquote>{athleteData.about.quote}</blockquote>
               </div>
 
-              <div className="signature-panel">
-                <span className="eyebrow dark">EK LAKSHYA</span>
+              <aside className="signature-panel">
+                <span className="eyebrow dark">{athleteData.brand}</span>
                 <p>
-                  Running is more than pace. It is rhythm, resilience, and a commitment to
-                  become stronger with every session.
+                  Running is a practice in patience: focus on the next stride, stay
+                  consistent, and keep moving forward.
                 </p>
-              </div>
+              </aside>
             </div>
           </div>
         </section>
 
         <section id="journey" className="section neutral-section">
           <div className="container">
-            <div className="section-heading split-heading">
-              <p className="section-kicker">Journey</p>
-              <h2>Progress shaped through consistent effort.</h2>
+            <div className="section-heading">
+              <p className="section-kicker">02 / The journey</p>
+              <h2>Keep moving. Keep learning. Keep becoming.</h2>
             </div>
 
-            <div className="timeline">
-              {athleteData.journey.map((item) => (
-                <div key={item.title} className="timeline-item">
-                  <div className="timeline-year">{item.year}</div>
-                  <div className="timeline-line" aria-hidden="true" />
-                  <div className="timeline-card">
-                    <h3>{item.title}</h3>
-                    <p>{item.description}</p>
-                  </div>
-                </div>
+            <div className="journey-grid">
+              {athleteData.journey.map((item, index) => (
+                <article key={item.title} className="journey-card">
+                  <span className="journey-index" aria-hidden="true">
+                    0{index + 1}
+                  </span>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="achievements" className="section">
-          <div className="container">
-            <div className="section-heading">
-              <p className="section-kicker">Achievements</p>
-              <h2>Results worth tracking.</h2>
+        <section id="progress" className="progress-section">
+          <div className="container progress-layout">
+            <div className="progress-mark" aria-hidden="true">
+              EK
             </div>
-
-            <div className="stats-grid">
-              {athleteData.achievements.map((item) => (
-                <div
-                  key={item.label}
-                  className={`stat-card ${item.placeholder ? 'placeholder' : ''}`}
-                >
-                  <span className="stat-value">{item.value}</span>
-                  <span className="stat-label">{item.label}</span>
-                </div>
-              ))}
+            <div className="progress-copy">
+              <p className="section-kicker">03 / The pursuit of progress</p>
+              <h2>Not a finish line. A reason to go further.</h2>
+              <p>
+                No unverified race results or records here—just a commitment to
+                discipline, steady effort, and personal growth. The next stride is
+                always yours to take.
+              </p>
             </div>
           </div>
         </section>
 
-        <section className="section neutral-section">
+        <section id="training" className="section">
           <div className="container">
             <div className="section-heading">
-              <p className="section-kicker">Training & lifestyle</p>
-              <h2>Movement, recovery, and daily discipline.</h2>
+              <p className="section-kicker">04 / Training mindset</p>
+              <h2>Strong foundations for every kind of progress.</h2>
+              <p className="section-intro">
+                General running and fitness themes—not a description of Laxman’s
+                personal training plan.
+              </p>
             </div>
 
             <div className="training-grid">
               {athleteData.training.map((item) => (
                 <article key={item.title} className="training-card">
-                  <img src={item.image} alt={item.title} />
+                  <img src={item.image} alt="" loading="lazy" />
                   <div className="training-copy">
                     <h3>{item.title}</h3>
                     <p>{item.description}</p>
@@ -212,63 +214,68 @@ function App() {
           </div>
         </section>
 
-        <section id="videos" className="section">
+        <section id="videos" className="section neutral-section">
           <div className="container">
-            <div className="section-heading split-heading">
-              <p className="section-kicker">Videos</p>
-              <h2>Public updates, stories, and training moments.</h2>
-              <a
-                href={athleteData.channelUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-link"
-              >
-                WATCH ON YOUTUBE
-              </a>
+            <div className="section-heading">
+              <p className="section-kicker">05 / YouTube</p>
+              <h2>EK LAKSHYA, straight from the source.</h2>
             </div>
 
-            <div className="video-grid">
-              {athleteData.videos.map((video) => (
+            <div className="channel-feature">
+              <div className="channel-icon" aria-hidden="true">
+                <PlayCircle size={40} />
+              </div>
+              <div className="channel-copy">
+                <p className="channel-label">THE OFFICIAL CHANNEL</p>
+                <h3>EK LAKSHYA SPORTS</h3>
+                <p>{athleteData.channelDescription}</p>
                 <a
-                  key={video.videoId}
-                  href={video.url}
+                  href={athleteData.channelUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="video-card"
+                  className="primary-button"
                 >
-                  <img src={video.thumbnail} alt={video.title} />
-                  <div className="video-overlay">
-                    <span className="play-badge">
-                      <Play size={16} />
-                    </span>
-                  </div>
-                  <div className="video-meta">
-                    <h3>{video.title}</h3>
-                  </div>
+                  WATCH ON YOUTUBE
+                  <ArrowUpRight size={18} aria-hidden="true" />
                 </a>
-              ))}
+              </div>
+              <div className="channel-wordmark" aria-hidden="true">
+                EK<br />LAKSHYA
+              </div>
             </div>
           </div>
         </section>
 
-        <section id="gallery" className="section neutral-section">
+        <section id="gallery" className="section">
           <div className="container">
             <div className="section-heading">
-              <p className="section-kicker">Gallery</p>
-              <h2>Moments in motion.</h2>
+              <p className="section-kicker">06 / Gallery</p>
+              <h2>A face to the journey. A focus on what’s next.</h2>
+              <p className="section-intro">
+                Laxman’s portrait is shown first. The remaining campaign images are
+                illustrative sports photography, not personal photos.
+              </p>
             </div>
 
             <div className="gallery-grid">
               {athleteData.gallery.map((image, index) => (
-                <figure key={`${image.alt}-${index}`} className={`gallery-item item-${index + 1}`}>
-                  <img src={image.image} alt={image.alt} />
+                <figure
+                  key={image.image}
+                  className={`gallery-item item-${index + 1}`}
+                >
+                  <img
+                    src={image.image}
+                    alt={image.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </figure>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="philosophy-banner" aria-label="Philosophy banner">
+        <section className="philosophy-banner" aria-label="EK LAKSHYA philosophy">
           <div className="container philosophy-wrapper">
             <p>THE FINISH LINE IS NOT THE LIMIT. IT IS THE NEXT BEGINNING.</p>
           </div>
@@ -277,32 +284,28 @@ function App() {
         <section id="contact" className="section">
           <div className="container contact-layout">
             <div className="contact-copy">
-              <p className="section-kicker">Contact</p>
-              <h2>Stay connected and keep moving forward.</h2>
+              <p className="section-kicker">07 / Follow along</p>
+              <h2>One channel. Every new chapter.</h2>
               <p>
-                Update the contact details in the athlete data file as verified links and
-                enquiries become available.
+                Follow Laxman’s public sports content on the official EK LAKSHYA
+                YouTube channel.
               </p>
             </div>
 
             <div className="contact-panel">
               <div className="contact-item">
-                <span>{athleteData.contact.emailLabel}</span>
-                <strong>{athleteData.contact.emailValue}</strong>
+                <span>YOUTUBE CHANNEL</span>
+                <strong>{athleteData.brand}</strong>
               </div>
-              <div className="contact-item">
-                <span>{athleteData.contact.instagramLabel}</span>
-                <strong>{athleteData.contact.instagramValue}</strong>
-              </div>
-              <div className="contact-item">
-                <span>{athleteData.contact.sponsorshipLabel}</span>
-                <strong>{athleteData.contact.sponsorshipValue}</strong>
-              </div>
-              <div className="contact-actions">
-                <a href={athleteData.channelUrl} target="_blank" rel="noreferrer" className="primary-button small">
-                  WATCH ON YOUTUBE
-                </a>
-              </div>
+              <a
+                href={athleteData.channelUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="primary-button small"
+              >
+                VISIT THE CHANNEL
+                <ArrowUpRight size={18} aria-hidden="true" />
+              </a>
             </div>
           </div>
         </section>
@@ -312,21 +315,23 @@ function App() {
         <div className="container footer-wrapper">
           <div>
             <a href="#home" className="brand footer-brand">
-              <span className="brand-mark">EK</span>
-              <span>LAKSHYA</span>
+              <span className="brand-mark" aria-hidden="true">EK</span>
+              <span>{athleteData.brand}</span>
             </a>
             <p>KEEP MOVING. KEEP GROWING.</p>
           </div>
 
           <div className="footer-links">
-            {navItems.map((item) => (
-              <a key={item.label} href={item.href}>
+            {athleteData.navigation.map((item) => (
+              <a key={item.href} href={item.href}>
                 {item.label}
               </a>
             ))}
           </div>
 
-          <div className="footer-copy">© {currentYear} EK LAKSHYA</div>
+          <div className="footer-copy">
+            © {currentYear} {athleteData.brand}
+          </div>
         </div>
       </footer>
     </div>

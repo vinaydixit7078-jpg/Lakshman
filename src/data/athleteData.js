@@ -1,139 +1,98 @@
 export const athleteData = {
   brand: 'EK LAKSHYA',
   fullName: 'LAXMAN CHAUHAN',
-  title: 'RUNNER | ATHLETE',
+  role: 'RUNNER | SPORTS ENTHUSIAST',
   channelUrl: 'https://www.youtube.com/@EK_LAKSHYA-t7f',
+  channelDescription: 'Speed • Strength • Fitness — Helping Athletes Perform Better',
+  // Replace these assets or verified profile details when new authentic material is available.
+  portrait: '/laxman-portrait.jpg',
   hero: {
     headline: 'BUILT BY DISCIPLINE. DEFINED BY DISTANCE.',
-    subheadline: 'Every stride has a purpose. Every finish line begins with a decision.',
-    label: 'LAXMAN CHAUHAN — RUNNER | ATHLETE',
-    accent: 'ONE GOAL. EVERY DAY.'
+    subheadline: 'Every stride is progress. Every day is an opportunity to go further.',
+    accent: 'ONE GOAL. EVERY DAY.',
   },
   about: {
     intro:
-      'Laxman Chauhan is building his journey through running, discipline, and steady effort. His work reflects consistency, fitness, and a growth mindset—one session at a time.',
-    quote: 'Progress is earned one stride at a time.'
+      'Laxman Chauhan is a runner and sports enthusiast building his path through movement, discipline, and steady effort. EK LAKSHYA reflects a simple belief: progress is made one day, one stride, and one choice at a time.',
+    quote: 'Progress is earned one stride at a time.',
   },
   journey: [
     {
-      year: 'Add date',
-      title: 'Foundations',
+      title: 'Show up',
       description:
-        'A starting point in running and training. Update this milestone with supported details as the journey develops.'
+        'Every journey starts with the decision to begin. Consistency turns that decision into a practice.',
     },
     {
-      year: 'Add date',
-      title: 'Training blocks',
+      title: 'Keep building',
       description:
-        'Consistency, endurance work, and technical improvement form the structure of the training rhythm.'
+        'Strength, fitness, and endurance grow through patient work and a willingness to keep learning.',
     },
     {
-      year: 'Add date',
-      title: 'Competition & focus',
+      title: 'Go further',
       description:
-        'Competition, pacing, and race-day discipline become the next layer of progress. Replace the placeholder as facts are confirmed.'
+        'The goal is not someone else’s finish line. It is continued progress, measured against who you were yesterday.',
     },
-    {
-      year: 'Add date',
-      title: 'Next chapter',
-      description:
-        'Future goals can be added here with accurate milestones, times, or achievements only when they are verified.'
-    }
-  ],
-  achievements: [
-    { value: 'Add your record', label: 'Best 5K', placeholder: true },
-    { value: 'Add your record', label: 'Best 10K', placeholder: true },
-    { value: 'Add your record', label: 'Half marathon', placeholder: true },
-    { value: 'Add your record', label: 'Races completed', placeholder: true }
   ],
   training: [
     {
       image:
         'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80',
-      title: 'Running form',
-      description: 'Technique, cadence, and movement quality.'
+      title: 'Movement',
+      description: 'Build a strong foundation through purposeful movement and good form.',
     },
     {
       image:
         'https://images.unsplash.com/photo-1541534401786-2077eed87a74?auto=format&fit=crop&w=900&q=80',
-      title: 'Warm-ups',
-      description: 'Mobility, activation, and easy acceleration.'
+      title: 'Strength',
+      description: 'Support athletic movement with strength, balance, and control.',
     },
     {
       image:
         'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=900&q=80',
-      title: 'Endurance',
-      description: 'Longer efforts built with steady aerobic work.'
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=900&q=80',
-      title: 'Recovery',
-      description: 'Rest, consistency, and smart recovery habits.'
-    }
-  ],
-  videos: [
-    {
-      title: 'Add your public video title',
-      videoId: 'placeholder-1',
-      url: 'https://www.youtube.com/@EK_LAKSHYA-t7f',
-      thumbnail:
-        'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=900&q=80'
-    },
-    {
-      title: 'Add your public short title',
-      videoId: 'placeholder-2',
-      url: 'https://www.youtube.com/@EK_LAKSHYA-t7f',
-      thumbnail:
-        'https://images.unsplash.com/photo-1526401485004-46910dc5a6c2?auto=format&fit=crop&w=900&q=80'
-    },
-    {
-      title: 'Add your next running update',
-      videoId: 'placeholder-3',
-      url: 'https://www.youtube.com/@EK_LAKSHYA-t7f',
-      thumbnail:
-        'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80'
-    }
-  ],
-  gallery: [
-    {
-      image:
-        'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80',
-      alt: 'Runner training outdoors on a track'
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1541534401786-2077eed87a74?auto=format&fit=crop&w=900&q=80',
-      alt: 'Athlete in motion during a run'
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=900&q=80',
-      alt: 'Athlete training with strong focus and endurance'
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1526401485004-46910dc5a6c2?auto=format&fit=crop&w=900&q=80',
-      alt: 'Runners preparing for a session'
-    },
-    {
-      image:
-        'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=900&q=80',
-      alt: 'Athlete in a race environment'
+      title: 'Fitness',
+      description: 'Develop fitness gradually, with care for the work and the recovery.',
     },
     {
       image:
         'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80',
-      alt: 'Running gear and shoes close-up'
-    }
+      title: 'Consistency',
+      description: 'Let regular effort—not a single day—shape long-term progress.',
+    },
   ],
-  contact: {
-    emailLabel: 'Email',
-    emailValue: 'Add your email',
-    instagramLabel: 'Instagram',
-    instagramValue: 'Add your handle',
-    sponsorshipLabel: 'Sponsorship',
-    sponsorshipValue: 'Add enquiry details'
-  },
-  navigation: ['Home', 'About', 'Journey', 'Achievements', 'Gallery', 'Videos', 'Contact']
+  gallery: [
+    {
+      image: '/laxman-portrait.jpg',
+      alt: 'Laxman Chauhan outdoors in athletic clothing',
+    },
+    {
+      image:
+        'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=85',
+      alt: 'Representative running imagery, not a photograph of Laxman Chauhan',
+    },
+    {
+      image:
+        'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=85',
+      alt: 'Representative sports imagery, not a photograph of Laxman Chauhan',
+    },
+    {
+      image:
+        'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=85',
+      alt: 'Representative fitness imagery, not a photograph of Laxman Chauhan',
+    },
+    {
+      image:
+        'https://images.unsplash.com/photo-1541534401786-2077eed87a74?auto=format&fit=crop&w=900&q=85',
+      alt: 'Representative training imagery, not a photograph of Laxman Chauhan',
+    },
+  ],
+  navigation: [
+    { label: 'Home', href: '#home' },
+    { label: 'About', href: '#about' },
+    { label: 'Journey', href: '#journey' },
+    { label: 'Progress', href: '#progress' },
+    { label: 'Training', href: '#training' },
+    { label: 'Gallery', href: '#gallery' },
+    { label: 'Videos', href: '#videos' },
+    { label: 'Contact', href: '#contact' },
+  ],
 }
