@@ -52,7 +52,6 @@ const isPasswordRecoveryRoute = () => (
   window.location.pathname.replace(/\/+$/, '') === '/admin/reset-password'
   || new URLSearchParams(window.location.hash.slice(1)).get('type') === 'recovery'
   || new URLSearchParams(window.location.hash.slice(1)).has('error_code')
-  || new URLSearchParams(window.location.search).get('mode') === 'recovery'
   || new URLSearchParams(window.location.search).has('error_code')
 )
 
@@ -178,7 +177,7 @@ function AdminLogin({ onSignedIn }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
-  const [recovering, setRecovering] = useState(false)
+  const [recovering, setRecovering] = useState(() => new URLSearchParams(window.location.search).get('mode') === 'recovery')
 
   async function submit(event) {
     event.preventDefault()
